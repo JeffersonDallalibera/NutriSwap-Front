@@ -1,3 +1,4 @@
+/* src/components/Login.css */
 .login-container {
     display: flex;
     justify-content: center;
@@ -94,6 +95,7 @@ button:hover {
 .forgot-password a:hover {
     text-decoration: underline; /* Adiciona sublinhado ao passar o mouse */
 }
+
 .message {
     color: #d9534f;
     text-align: center;

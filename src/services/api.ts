@@ -1,11 +1,20 @@
+// src/services/api.ts
 import axios from 'axios';
 
-// Configure a URL base para o seu backend Flask
 const api = axios.create({
-    baseURL: 'http://localhost:5000', // Ajuste conforme necessário
-    headers: {
-        'Content-Type': 'application/json',
-    },
+    baseURL: 'http://localhost:5000' // URL do seu backend
 });
+
+// Adiciona o token JWT aos cabeçalhos das requisições
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
 export default api;

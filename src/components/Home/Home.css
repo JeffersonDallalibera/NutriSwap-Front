@@ -1,0 +1,62 @@
+/* src/components/Home/Home.css */
+.home-container {
+    display: flex;
+    height: 100vh; /* Garante que o contêiner ocupe a altura total da tela */
+    overflow: hidden; /* Evita rolagem na tela principal */
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #e0f7fa; /* Fundo da sidebar com a mesma cor da tela de login */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra para separar a sidebar do conteúdo */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Garante que a sidebar ocupe a altura total */
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center; /* Centraliza a logo horizontalmente */
+    margin-bottom: 20px; /* Espaço abaixo da logo */
+}
+
+.logo {
+    width: 100%; /* Ajusta a logo para a largura da container */
+    height: auto; /* Mantém a proporção da logo */
+}
+
+.menu {
+    flex: 1; /* Faz o menu ocupar o espaço restante na sidebar */
+}
+
+.menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu ul li {
+    margin: 10px 0;
+}
+
+.menu ul li a {
+    text-decoration: none;
+    color: #00796b; /* Cor dos links do menu */
+    font-size: 18px; /* Tamanho da fonte para os itens do menu */
+    display: block;
+    padding: 10px;
+    border-radius: 4px; /* Bordas arredondadas dos itens do menu */
+    transition: background-color 0.3s ease; /* Transição suave para a cor de fundo */
+}
+
+.menu ul li a:hover {
+    background-color: #b2dfdb; /* Cor de fundo ao passar o mouse */
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    background-color: #9fe7f1; /* Cor de fundo do conteúdo */
+    overflow-y: auto; /* Permite rolagem vertical no conteúdo */
+}

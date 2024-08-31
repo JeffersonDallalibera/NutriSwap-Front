@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate em vez de useHistory
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 // @ts-ignore
 import { ReactComponent as Logo } from '../../assets/nutriSwap_LOGO_VERDE.svg';
@@ -9,20 +9,19 @@ const Login: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [message, setMessage] = useState<string>('');
-    const navigate = useNavigate(); // Inicializa o hook useNavigate
+    const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await api.post('/auth/login', {
-                username,
-                password
-            });
-            setMessage(response.data.message);
+            const response = await api.post('/auth/login', { username, password });
+            const { token } = response.data;
 
-            if (response.data.redirect_url) {
-                navigate(response.data.redirect_url); // Redireciona para a página inicial
+            if (token) {
+                localStorage.setItem('access_token', token); // Armazena o token no localStorage
+                navigate('/home'); // Redireciona para a página inicial
             }
+            setMessage(response.data.message);
         } catch (error: any) {
             setMessage(error.response?.data.error || 'Login failed');
         }
@@ -32,7 +31,7 @@ const Login: React.FC = () => {
         <div className="login-container">
             <div className="window">
                 <div className="logo-container">
-                    <Logo className="logo"/>
+                    <Logo className="logo" />
                 </div>
                 <div className="form-container">
                     <form onSubmit={handleLogin}>
@@ -59,6 +58,7 @@ const Login: React.FC = () => {
                     <div className="forgot-password">
                         <a href="/forgot-password">Esqueci minha senha</a>
                     </div>
+                    {message && <div className="message">{message}</div>}
                 </div>
             </div>
         </div>
