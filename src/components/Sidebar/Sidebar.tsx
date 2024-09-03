@@ -1,4 +1,3 @@
-// Sidebar.tsx
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Sidebar.css';
@@ -8,7 +7,6 @@ import logo from '../../assets/nutriSwap_LOGO_VERDE.svg';
 const Sidebar: React.FC = () => {
     const location = useLocation();
 
-    // Função de logout (exemplo, você pode adaptar conforme a necessidade)
     const handleLogout = () => {
         // Implementar a lógica de logout, como limpar cookies ou redirecionar para uma página de login
         console.log('Logout');
@@ -33,8 +31,8 @@ const Sidebar: React.FC = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/home/view-diets"
-                              className={location.pathname === '/home/view-diets' ? 'active' : ''}>
+                        <Link to="/home/view-diet"
+                              className={location.pathname === '/home/view-diet' ? 'active' : ''}>
                             Visualizar Dietas
                         </Link>
                     </li>
@@ -50,7 +48,6 @@ const Sidebar: React.FC = () => {
                     Sair
                 </button>
             </div>
-
         </div>
     );
 };

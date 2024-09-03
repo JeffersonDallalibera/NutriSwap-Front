@@ -8,7 +8,7 @@ const Home: React.FC = () => {
     return (
         <div className="home-container">
             <div className="content">
-                <Outlet />
+                <Outlet/>
             </div>
         </div>
     );
