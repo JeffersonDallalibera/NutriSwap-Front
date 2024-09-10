@@ -55,7 +55,7 @@ input[type='text']:focus {
 }
 
 .tipo-container select {
-    max-width: 150px; /* Ajuste o tamanho máximo conforme necessário */
+    max-width: 200px; /* Ajuste o tamanho máximo conforme necessário */
 }
 
 .porcao-aviso {

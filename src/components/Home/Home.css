@@ -3,6 +3,7 @@
     display: flex;
     height: 100vh; /* Garante que o contêiner ocupe a altura total da tela */
     overflow: hidden; /* Evita rolagem na tela principal */
+    flex-direction: row; /* Alinha a sidebar e o conteúdo lado a lado */
 }
 
 .sidebar {
@@ -59,4 +60,33 @@
     padding: 20px;
     background-color: #9fe7f1; /* Cor de fundo do conteúdo */
     overflow-y: auto; /* Permite rolagem vertical no conteúdo */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .home-container {
+        flex-direction: column; /* Alinha a sidebar e o conteúdo em coluna em telas pequenas */
+    }
+
+    .sidebar {
+        width: 100%; /* Sidebar ocupa toda a largura em telas pequenas */
+        height: auto; /* Ajusta a altura da sidebar conforme o conteúdo */
+        box-shadow: none; /* Remove a sombra da sidebar em telas pequenas */
+        position: relative; /* Ajusta a posição da sidebar */
+    }
+
+    .content {
+        padding: 10px; /* Ajusta o padding do conteúdo em telas pequenas */
+    }
+}
+
+@media (max-width: 480px) {
+    .menu ul li a {
+        font-size: 16px; /* Ajusta o tamanho da fonte para telas muito pequenas */
+        padding: 8px; /* Ajusta o padding dos itens do menu para telas muito pequenas */
+    }
+
+    .logo {
+        width: 200px; /* Reduz o tamanho da logo para telas muito pequenas */
+    }
 }

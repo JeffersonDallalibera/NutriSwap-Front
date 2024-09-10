@@ -1,31 +1,42 @@
-/* Layout.css */
+/* src/components/Layout/Layout.css */
 .layout {
     display: flex;
-    height: 100vh;
-    overflow: hidden; /* Evitar rolagem desnecessária no layout */
+    height: 100vh; /* Garante que o layout ocupe a altura total da tela */
+    overflow: hidden; /* Evita rolagem no contêiner principal */
 }
 
 .sidebar {
-    width: 250px; /* Largura da sidebar */
-    background-color: #00796b; /* Cor de fundo da sidebar */
-    color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    position: fixed; /* Fixar a sidebar na lateral */
+    width: 250px; /* Largura padrão da Sidebar */
+    position: fixed; /* Fixar a Sidebar na lateral */
     top: 0;
     left: 0;
-    height: 100%; /* Garantir que a sidebar ocupe toda a altura da tela */
-    overflow-y: auto; /* Permitir rolagem se necessário */
-    z-index: 1000; /* Garantir que a sidebar fique sobre outros elementos */
+    height: 100%;
+    background-color: #2c3e50; /* Cor de fundo da Sidebar */
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Sombra */
+    transition: transform 0.3s ease; /* Transição suave para abertura e fechamento */
+}
+
+.sidebar.closed {
+    transform: translateX(-100%); /* Oculta a Sidebar deslizando para fora da tela */
 }
 
 .content {
-    margin-left: 250px; /* Margem esquerda igual à largura da sidebar */
+    flex: 1;
+    margin-left: 250px; /* Espaço reservado para a Sidebar */
     padding: 20px;
-    background-color: #e0f7fa;
-    height: 100vh; /* Garantir que o conteúdo ocupe toda a altura da tela */
-    overflow-y: auto; /* Permitir rolagem se o conteúdo for grande */
-    box-sizing: border-box;
+    background-color: #9fe7f1; /* Cor de fundo do conteúdo */
+    overflow-y: auto; /* Permite rolagem vertical no conteúdo */
+    transition: margin-left 0.3s ease; /* Transição suave para ajuste de margem */
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Ajuste da largura da Sidebar em dispositivos móveis */
+    }
+
+    .content {
+        margin-left: 0; /* Remove a margem quando a Sidebar está oculta */
+    }
 }

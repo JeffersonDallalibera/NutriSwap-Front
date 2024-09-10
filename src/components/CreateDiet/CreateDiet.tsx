@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './CreateDiet.css';
+// Certifique-se de que o caminho para o componente Person está correto
+// @ts-ignore
+import Person from "../Person";
+import {PersonData} from "../Person/Person";
 
 // Interfaces para tipagem
 interface Alimento {
@@ -113,9 +117,20 @@ const CreateDiet: React.FC = () => {
     const handleSaveDiet = () => {
         console.log('Gerar PDF e salvar dieta:', meals);
     };
+    // Dentro do seu componente CreateDiet:
+    const handleSavePerson = (person: PersonData) => {
+        console.log('Pessoa salva:', person);
+        // Aqui você pode adicionar a pessoa a uma lista ou fazer outra lógica
+    };
+
 
     return (
         <div className="create-diet-container">
+            <h2>Criar Dieta</h2>
+
+            {/* Componente para adicionar pessoas à dieta */}
+            <Person onSave={handleSavePerson} />
+
             {meals.map((meal, mealIndex) => (
                 <div key={mealIndex} className="meal">
                     <h3>Refeição {mealIndex + 1}</h3>

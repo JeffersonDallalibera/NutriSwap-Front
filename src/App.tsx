@@ -10,6 +10,7 @@ import AddFood from './components/AddFood';
 import PrivateRoute from './components/PrivateRoute';
 import ViewDiet from "./components/ViewDiets";
 
+
 const App: React.FC = () => {
     return (
         <Router>
