@@ -8,30 +8,43 @@ interface Alimento {
 }
 
 interface AlimentoEntry {
-    tipo: string;
+    tipo: number; // Atualize para tipo number
     nome: string;
     tipoQuantidade: string;
     quantidade: string;
     equivalentes: Alimento[];
 }
 
-// Dados estáticos (idealmente, buscar do backend)
-const tiposAlimento = [
-    { id: 1, nome: 'Proteína' },
-    { id: 2, nome: 'Carboidrato' },
-    { id: 3, nome: 'Bebida' },
-    { id: 4, nome: 'Fruta' },
-];
+interface TipoAlimento {
+    id: number;
+    nome: string;
+}
 
 // Função auxiliar para criar uma nova refeição
 const createNewMeal = () => ({
-    alimentos: [{ tipo: '', nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }],
+    alimentos: [{ tipo: 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }], // Atualize para tipo 0
 });
 
 const CreateDiet: React.FC = () => {
     const [meals, setMeals] = useState<{ alimentos: AlimentoEntry[] }[]>([createNewMeal()]);
     const [alimentos, setAlimentos] = useState<Alimento[]>([]);
-    const [selectedTipo, setSelectedTipo] = useState<string>('');
+    const [tiposAlimento, setTiposAlimento] = useState<TipoAlimento[]>([]);
+    const [selectedTipo, setSelectedTipo] = useState<number>(0); // Atualize para tipo number
+
+    // Buscar tipos de alimentos do backend quando o componente for montado
+    useEffect(() => {
+        const fetchTiposAlimento = async () => {
+            try {
+                const response = await fetch('/api/tipos_alimento');
+                const data = await response.json();
+                setTiposAlimento(data);
+            } catch (error) {
+                console.error('Erro ao buscar tipos de alimentos:', error);
+            }
+        };
+
+        fetchTiposAlimento();
+    }, []);
 
     // Buscar alimentos do backend quando o tipo for selecionado
     useEffect(() => {
@@ -55,7 +68,7 @@ const CreateDiet: React.FC = () => {
         mealIndex: number,
         alimentoIndex: number,
         field: keyof AlimentoEntry,
-        value: string | Alimento[]
+        value: string | number | Alimento[]
     ) => {
         setMeals((prevMeals) =>
             prevMeals.map((meal, mIndex) => {
@@ -76,7 +89,7 @@ const CreateDiet: React.FC = () => {
         setMeals((prevMeals) =>
             prevMeals.map((meal, index) =>
                 index === mealIndex
-                    ? { ...meal, alimentos: [...meal.alimentos, { tipo: '', nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }] }
+                    ? { ...meal, alimentos: [...meal.alimentos, { tipo: 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }] }
                     : meal
             )
         );
@@ -114,14 +127,14 @@ const CreateDiet: React.FC = () => {
                                 id={`tipo-${mealIndex}-${alimentoIndex}`}
                                 value={alimento.tipo}
                                 onChange={(e) => {
-                                    const tipo = e.target.value;
-                                    handleAlimentoChange(mealIndex, alimentoIndex, 'tipo', tipo);
-                                    setSelectedTipo(tipo);
+                                    const tipoId = parseInt(e.target.value, 10); // Converte para número
+                                    handleAlimentoChange(mealIndex, alimentoIndex, 'tipo', tipoId);
+                                    setSelectedTipo(tipoId); // Atualiza o tipo selecionado
                                 }}
                             >
-                                <option value="">Selecione um tipo</option>
+                                <option value={0}>Selecione um tipo</option>
                                 {tiposAlimento.map((tipo) => (
-                                    <option key={tipo.id} value={tipo.nome}>
+                                    <option key={tipo.id} value={tipo.id}>
                                         {tipo.nome}
                                     </option>
                                 ))}
@@ -142,12 +155,16 @@ const CreateDiet: React.FC = () => {
                                 ))}
                             </select>
                             {/* Botão para buscar alimentos equivalentes */}
-
+                            <button
+                                className="search-button"
+                                onClick={() => buscarAlimentosEquivalentes(mealIndex, alimentoIndex, alimento.nome)}
+                            >
+                                Buscar Equivalentes
+                            </button>
 
                             {/* Seleção do tipo de quantidade */}
                             <div className="tipo-container">
-                                <label htmlFor={`tipoQuantidade-${mealIndex}-${alimentoIndex}`}>Tipo de
-                                    Quantidade</label>
+                                <label htmlFor={`tipoQuantidade-${mealIndex}-${alimentoIndex}`}>Tipo de Quantidade</label>
                                 <select
                                     id={`tipoQuantidade-${mealIndex}-${alimentoIndex}`}
                                     value={alimento.tipoQuantidade}
@@ -170,13 +187,6 @@ const CreateDiet: React.FC = () => {
                                         handleAlimentoChange(mealIndex, alimentoIndex, 'quantidade', e.target.value)
                                     }
                                 />
-                                <button
-                                    className="search-button"
-                                    onClick={() => buscarAlimentosEquivalentes(mealIndex, alimentoIndex, alimento.nome)}
-                                >
-                                    Buscar Equivalentes
-                                </button>
-
                                 {/* Exibição dos alimentos equivalentes */}
                                 <div className="equivalentes-container">
                                     {alimento.equivalentes.map((equivalente, index) => (
