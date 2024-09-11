@@ -29,87 +29,115 @@ const Login: React.FC = () => {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <Paper elevation={3} sx={{ padding: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Box mb={2}>
-                    <Logo width={200} />
-                </Box>
-                <Typography component="h1" variant="h5">
-                    Login
-                </Typography>
-                <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="username"
-                        label="Usuário"
-                        name="username"
-                        autoComplete="username"
-                        autoFocus
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        InputProps={{
-                            sx: {
-                                borderRadius: '4px',
-                                backgroundColor: '#f9f9f9',
-                                '&:hover': {
-                                    borderColor: '#00796b',
-                                },
-                            }
-                        }}
-                        InputLabelProps={{
-                            sx: {
-                                color: '#333',
-                            }
-                        }}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Senha"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        InputProps={{
-                            sx: {
-                                borderRadius: '4px',
-                                backgroundColor: '#f9f9f9',
-                                '&:hover': {
-                                    borderColor: '#00796b',
-                                },
-                            }
-                        }}
-                        InputLabelProps={{
-                            sx: {
-                                color: '#333',
-                            }
-                        }}
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 2, mb: 2 }}
-                    >
-                        Login
-                    </Button>
-                    <Link href="/forgot-password" variant="body2" sx={{ display: 'block', textAlign: 'right' }}>
-                        Esqueci minha senha
-                    </Link>
-                    {message && (
-                        <Typography color="error" variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
-                            {message}
-                        </Typography>
-                    )}
-                </Box>
-            </Paper>
-        </Container>
+        <div style={{ backgroundColor: '#00796b', minHeight: '100vh' }}>
+            <Container
+                component="main"
+                maxWidth="xs"
+                sx={{
+                    height: '100vh',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#00796b',
+                    padding: 2
+                }}
+            >
+                <Paper
+                    elevation={6}
+                    sx={{
+                        padding: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        borderRadius: 3,
+                        backgroundColor: '#ffffff',
+                        width: '100%',
+                        maxWidth: 400,
+                        boxSizing: 'border-box',
+                    }}
+                >
+                    <Box mb={2} display="flex" justifyContent="center">
+                        <Logo width={150} />
+                    </Box>
+                    <Typography component="h1" variant="h4" sx={{ fontWeight: 'bold', color: '#00796b' }}>
+                        Acesse sua conta
+                    </Typography>
+                    <Box component="form" onSubmit={handleLogin} sx={{ mt: 3, width: '100%' }}>
+                        <TextField
+                            margin="normal"
+                            multiline
+                            required
+                            fullWidth
+                            id="username"
+                            label="Usuário"
+                            name="username"
+                            autoComplete="username"
+                            autoFocus
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            InputProps={{
+                                sx: {
+                                    borderRadius: '8px',
+                                    backgroundColor: '#e0f2f1',
+                                    '&:hover': {
+                                        borderColor: '#004d40',
+                                    },
+                                }
+                            }}
+                            InputLabelProps={{
+                                sx: {
+                                    color: '#004d40',
+                                }
+                            }}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Senha"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            InputProps={{
+                                sx: {
+                                    borderRadius: '8px',
+                                    backgroundColor: '#e0f2f1',
+                                    '&:hover': {
+                                        borderColor: '#004d40',
+                                    },
+                                }
+                            }}
+                            InputLabelProps={{
+                                sx: {
+                                    color: '#004d40',
+                                }
+                            }}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="success"
+                            sx={{ mt: 2, mb: 2, borderRadius: '8px' }}
+                        >
+                            Entrar
+                        </Button>
+                        <Link href="/forgot-password" variant="body2" sx={{ display: 'block', textAlign: 'right', color: '#00796b' }}>
+                            Esqueceu sua senha?
+                        </Link>
+                        {message && (
+                            <Typography color="error" variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+                                {message}
+                            </Typography>
+                        )}
+                    </Box>
+                </Paper>
+            </Container>
+        </div>
     );
 };
 

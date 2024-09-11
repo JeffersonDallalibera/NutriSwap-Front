@@ -59,20 +59,26 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
             </Typography>
             <Paper sx={{ padding: 2 }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
                     <TextField
+                        id="outlined-textarea"
                         label="Nome"
                         name="nome"
                         value={person.nome}
                         onChange={handleChange}
-                        variant="outlined"
+                        placeholder="Nome"
+                        size="small"
+                        multiline
                     />
                     <TextField
+                        id="outlined-textarea"
                         label="Idade"
                         name="idade"
                         type="number"
                         value={person.idade}
                         onChange={handleChange}
-                        variant="outlined"
+                        size="small"
+                        multiline
                     />
                     <TextField
                         label="Peso (kg)"
@@ -81,6 +87,8 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
                         value={person.peso}
                         onChange={handleChange}
                         variant="outlined"
+                        multiline
+                        size="small"
                     />
                     <TextField
                         label="Altura (cm)"
@@ -89,6 +97,8 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
                         value={person.altura}
                         onChange={handleChange}
                         variant="outlined"
+                        multiline
+                        size="small"
                     />
                     <TextField
                         label="Email"
@@ -97,6 +107,8 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
                         value={person.email}
                         onChange={handleChange}
                         variant="outlined"
+                        multiline
+                        size="small"
                     />
                     <TextField
                         label="Telefone"
@@ -104,6 +116,8 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
                         value={person.telefone}
                         onChange={handleChange}
                         variant="outlined"
+                        multiline
+                        size="small"
                     />
                 </Box>
                 <Box sx={{ marginTop: 2, display: 'flex', gap: 2 }}>

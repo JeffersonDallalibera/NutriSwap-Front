@@ -183,7 +183,10 @@ const CreateDiet: React.FC = () => {
                                             value={alimento.quantidade}
                                             onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'quantidade', e.target.value)}
                                             sx={{ flexWrap: 1 }}
+                                            multiline
+                                            size="small"
                                         />
+
                                         <Button
                                             variant="contained"
                                             color="primary"
