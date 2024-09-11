@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './Person.css';
+import { TextField, Button, Typography, Box, Paper } from '@mui/material';
+import '../styles/styles.css'
 
 export interface PersonData {
     nome: string;
@@ -24,81 +25,96 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
         telefone: ''
     });
 
+    const [savedPerson, setSavedPerson] = useState<PersonData | null>(null);
+    const [imc, setImc] = useState<number | null>(null);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setPerson({ ...person, [name]: value });
     };
 
-    const [savedPerson, setSavedPerson] = useState<PersonData | null>(null);
-
     const handleSave = () => {
-            setSavedPerson(person)
-            onSave(person);
-            setPerson({
-                nome: '',
-                idade: 0,
-                peso: 0,
-                altura: 0,
-                email: '',
-                telefone: ''
-            });
-
+        setSavedPerson(person);
+        onSave(person);
+        setPerson({
+            nome: '',
+            idade: 0,
+            peso: 0,
+            altura: 0,
+            email: '',
+            telefone: ''
+        });
     };
 
-
+    const calculateIMC = () => {
+        const alturaMetros = person.altura / 100;
+        const imcValue = person.peso / (alturaMetros * alturaMetros);
+        setImc(imcValue);
+    };
 
     return (
-        <div className="person-container">
-            <h2>Adicionar Pessoa</h2>
-            <div className="person-form">
-                <label>Nome:</label>
-                <input
-                    type="text"
-                    name="nome"
-                    value={person.nome}
-                    onChange={handleChange}
-                />
-                <label>Idade:</label>
-                <input
-                    type="number"
-                    name="idade"
-                    value={person.idade}
-                    onChange={handleChange}
-                />
-                <label>Peso (kg):</label>
-                <input
-                    type="number"
-                    name="peso"
-                    value={person.peso}
-                    onChange={handleChange}
-                />
-                <label>Altura (cm):</label>
-                <input
-                    type="number"
-                    name="altura"
-                    value={person.altura}
-                    onChange={handleChange}
-                />
-                <label>Email:</label>
-                <input
-                    type="email"
-                    name="email"
-                    value={person.email}
-                    onChange={handleChange}
-                />
-                <label>Telefone:</label>
-                <input
-                    type="text"
-                    name="telefone"
-                    value={person.telefone}
-                    onChange={handleChange}
-                />
-            </div>
-            <button onClick={handleSave}>Salvar Pessoa</button>
-
+        <Box sx={{ padding: 2 }}>
+            <Typography variant="h4" gutterBottom>
+                Adicionar Pessoa
+            </Typography>
+            <Paper sx={{ padding: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <TextField
+                        label="Nome"
+                        name="nome"
+                        value={person.nome}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                    <TextField
+                        label="Idade"
+                        name="idade"
+                        type="number"
+                        value={person.idade}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                    <TextField
+                        label="Peso (kg)"
+                        name="peso"
+                        type="number"
+                        value={person.peso}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                    <TextField
+                        label="Altura (cm)"
+                        name="altura"
+                        type="number"
+                        value={person.altura}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                    <TextField
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={person.email}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                    <TextField
+                        label="Telefone"
+                        name="telefone"
+                        value={person.telefone}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                </Box>
+                <Box sx={{ marginTop: 2, display: 'flex', gap: 2 }}>
+                    <Button variant="contained" color="primary" onClick={handleSave}>
+                        Salvar Pessoa
+                    </Button>
+                </Box>
+            </Paper>
             {savedPerson && (
-                <div className="person-list">
-                    <h3>Dados da Pessoa Adicionada:</h3>
+                <Paper sx={{ padding: 2, marginTop: 2 }}>
+                    <Typography variant="h6">Dados da Pessoa Adicionada:</Typography>
                     <ul>
                         <li><strong>Nome:</strong> {savedPerson.nome}</li>
                         <li><strong>Idade:</strong> {savedPerson.idade}</li>
@@ -106,10 +122,16 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
                         <li><strong>Altura:</strong> {savedPerson.altura} cm</li>
                         <li><strong>Email:</strong> {savedPerson.email}</li>
                         <li><strong>Telefone:</strong> {savedPerson.telefone}</li>
+                        {imc !== null && (
+                            <li><strong>IMC:</strong> {imc.toFixed(2)}</li>
+                        )}
                     </ul>
-                </div>
+                    <Button variant="contained" color="secondary" onClick={calculateIMC} sx={{ minWidth: '120px' }}>
+                        Calcular IMC
+                    </Button>
+                </Paper>
             )}
-        </div>
+        </Box>
     );
 };
 

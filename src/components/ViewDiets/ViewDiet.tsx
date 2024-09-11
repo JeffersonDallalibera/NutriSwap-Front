@@ -1,6 +1,5 @@
 // ViewDiets.tsx
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../Sidebar/Sidebar'; // Ajuste o caminho conforme necessário
 import './ViewDiet.css';
 
 interface Diet {
@@ -29,7 +28,6 @@ const ViewDiets: React.FC = () => {
 
     return (
         <div className="container">
-            <Sidebar />
             <div className="main-content">
                 <h1>Visualizar Dietas Criadas</h1>
                 <table>

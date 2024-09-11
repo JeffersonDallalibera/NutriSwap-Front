@@ -1,7 +1,7 @@
 // src/components/Home/Home.tsx
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from '../Sidebar/Sidebar';
+
 import './Home.css';
 
 const Home: React.FC = () => {

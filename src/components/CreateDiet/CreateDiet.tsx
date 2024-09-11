@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import './CreateDiet.css';
-// Certifique-se de que o caminho para o componente Person está correto
-// @ts-ignore
-import Person from "../Person";
-import {PersonData} from "../Person/Person";
+import { Box, Button, TextField, MenuItem, Select, InputLabel, FormControl, Typography, Paper, Grid } from '@mui/material';
+import Person from '../Person';
+import { PersonData } from '../Person/Person';
+import '../styles/styles.css'
 
-// Interfaces para tipagem
+
 interface Alimento {
     id: number;
     nome: string;
 }
 
 interface AlimentoEntry {
-    tipo: number; // Atualize para tipo number
+    tipo: number;
     nome: string;
     tipoQuantidade: string;
     quantidade: string;
@@ -24,18 +23,16 @@ interface TipoAlimento {
     nome: string;
 }
 
-// Função auxiliar para criar uma nova refeição
 const createNewMeal = () => ({
-    alimentos: [{ tipo: 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }], // Atualize para tipo 0
+    alimentos: [{ tipo: 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }],
 });
 
 const CreateDiet: React.FC = () => {
     const [meals, setMeals] = useState<{ alimentos: AlimentoEntry[] }[]>([createNewMeal()]);
     const [alimentos, setAlimentos] = useState<Alimento[]>([]);
     const [tiposAlimento, setTiposAlimento] = useState<TipoAlimento[]>([]);
-    const [selectedTipo, setSelectedTipo] = useState<number>(0); // Atualize para tipo number
+    const [selectedTipo, setSelectedTipo] = useState<number | ''>(0);
 
-    // Buscar tipos de alimentos do backend quando o componente for montado
     useEffect(() => {
         const fetchTiposAlimento = async () => {
             try {
@@ -50,10 +47,9 @@ const CreateDiet: React.FC = () => {
         fetchTiposAlimento();
     }, []);
 
-    // Buscar alimentos do backend quando o tipo for selecionado
     useEffect(() => {
         const fetchAlimentos = async () => {
-            if (!selectedTipo) return;
+            if (selectedTipo === 0) return;
 
             try {
                 const response = await fetch(`/api/alimentos?tipo=${selectedTipo}`);
@@ -67,7 +63,6 @@ const CreateDiet: React.FC = () => {
         fetchAlimentos();
     }, [selectedTipo]);
 
-    // Função genérica para atualizar campos de um alimento
     const handleAlimentoChange = (
         mealIndex: number,
         alimentoIndex: number,
@@ -88,7 +83,6 @@ const CreateDiet: React.FC = () => {
         );
     };
 
-    // Adicionar um novo alimento a uma refeição
     const addAlimento = (mealIndex: number) => {
         setMeals((prevMeals) =>
             prevMeals.map((meal, index) =>
@@ -99,10 +93,8 @@ const CreateDiet: React.FC = () => {
         );
     };
 
-    // Adicionar uma nova refeição
     const addMeal = () => setMeals((prevMeals) => [...prevMeals, createNewMeal()]);
 
-    // Buscar alimentos equivalentes
     const buscarAlimentosEquivalentes = async (mealIndex: number, alimentoIndex: number, alimentoNome: string) => {
         try {
             const response = await fetch(`/api/alimentos/equivalentes?nome=${alimentoNome}`);
@@ -113,115 +105,127 @@ const CreateDiet: React.FC = () => {
         }
     };
 
-    // Salvar a dieta (implementação simulada)
     const handleSaveDiet = () => {
         console.log('Gerar PDF e salvar dieta:', meals);
     };
-    // Dentro do seu componente CreateDiet:
+
     const handleSavePerson = (person: PersonData) => {
         console.log('Pessoa salva:', person);
-        // Aqui você pode adicionar a pessoa a uma lista ou fazer outra lógica
     };
 
-
     return (
-        <div className="create-diet-container">
-            <h2>Criar Dieta</h2>
-
-            {/* Componente para adicionar pessoas à dieta */}
+        <Box sx={{ padding: 2 }}>
+            <Typography variant="h4" sx={{ marginBottom: 2 }}>Criar Dieta</Typography>
             <Person onSave={handleSavePerson} />
-
             {meals.map((meal, mealIndex) => (
-                <div key={mealIndex} className="meal">
-                    <h3>Refeição {mealIndex + 1}</h3>
-                    {meal.alimentos.map((alimento, alimentoIndex) => (
-                        <div key={alimentoIndex} className="form-group">
-                            {/* Seleção do tipo de alimento */}
-                            <label htmlFor={`tipo-${mealIndex}-${alimentoIndex}`}>Tipo de alimento</label>
-                            <select
-                                id={`tipo-${mealIndex}-${alimentoIndex}`}
-                                value={alimento.tipo}
-                                onChange={(e) => {
-                                    const tipoId = parseInt(e.target.value, 10); // Converte para número
-                                    handleAlimentoChange(mealIndex, alimentoIndex, 'tipo', tipoId);
-                                    setSelectedTipo(tipoId); // Atualiza o tipo selecionado
-                                }}
-                            >
-                                <option value={0}>Selecione um tipo</option>
-                                {tiposAlimento.map((tipo) => (
-                                    <option key={tipo.id} value={tipo.id}>
-                                        {tipo.nome}
-                                    </option>
-                                ))}
-                            </select>
+                <Paper key={mealIndex} sx={{ padding: 2, marginBottom: 2 }}>
+                    <Typography variant="h6">Refeição {mealIndex + 1}</Typography>
+                    <Grid container spacing={2}>
+                        {meal.alimentos.map((alimento, alimentoIndex) => (
+                            <Grid item xs={12} key={alimentoIndex}>
+                                <Box sx={{ marginBottom: 2 }}>
+                                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                                        <InputLabel>Tipo de alimento</InputLabel>
+                                        <Select
+                                            value={alimento.tipo}
+                                            onChange={(e) => {
+                                                const tipoValue = e.target.value as string;
+                                                const tipoId = parseInt(tipoValue, 10);
+                                                handleAlimentoChange(mealIndex, alimentoIndex, 'tipo', tipoId);
+                                                setSelectedTipo(tipoId);
+                                            }}
+                                        >
+                                            <MenuItem value={0}>Selecione um tipo</MenuItem>
+                                            {tiposAlimento.map((tipo) => (
+                                                <MenuItem key={tipo.id} value={tipo.id}>
+                                                    {tipo.nome}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
 
-                            {/* Seleção do nome do alimento */}
-                            <label htmlFor={`nome-${mealIndex}-${alimentoIndex}`}>Selecione um alimento</label>
-                            <select
-                                id={`nome-${mealIndex}-${alimentoIndex}`}
-                                value={alimento.nome}
-                                onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'nome', e.target.value)}
-                            >
-                                <option value="">Selecione um alimento</option>
-                                {alimentos.map((alimento) => (
-                                    <option key={alimento.id} value={alimento.nome}>
-                                        {alimento.nome}
-                                    </option>
-                                ))}
-                            </select>
-                            {/* Botão para buscar alimentos equivalentes */}
-                            <button
-                                className="search-button"
-                                onClick={() => buscarAlimentosEquivalentes(mealIndex, alimentoIndex, alimento.nome)}
-                            >
-                                Buscar Equivalentes
-                            </button>
+                                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                                        <InputLabel>Selecione um alimento</InputLabel>
+                                        <Select
+                                            value={alimento.nome}
+                                            onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'nome', e.target.value)}
+                                        >
+                                            <MenuItem value="">Selecione um alimento</MenuItem>
+                                            {alimentos.map((alimento) => (
+                                                <MenuItem key={alimento.id} value={alimento.nome}>
+                                                    {alimento.nome}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
 
-                            {/* Seleção do tipo de quantidade */}
-                            <div className="tipo-container">
-                                <label htmlFor={`tipoQuantidade-${mealIndex}-${alimentoIndex}`}>Tipo de Quantidade</label>
-                                <select
-                                    id={`tipoQuantidade-${mealIndex}-${alimentoIndex}`}
-                                    value={alimento.tipoQuantidade}
-                                    onChange={(e) =>
-                                        handleAlimentoChange(mealIndex, alimentoIndex, 'tipoQuantidade', e.target.value)
-                                    }
-                                >
-                                    <option value="">Selecione o tipo</option>
-                                    <option value="Porção">Porção</option>
-                                    <option value="Quantidade">Quantidade</option>
-                                </select>
-                                {alimento.tipoQuantidade === 'Porção' && (
-                                    <div className="porcao-aviso">Considere 100 gramas para cada unidade de porção</div>
-                                )}
-                                <input
-                                    type="text"
-                                    placeholder="Quantidade"
-                                    value={alimento.quantidade}
-                                    onChange={(e) =>
-                                        handleAlimentoChange(mealIndex, alimentoIndex, 'quantidade', e.target.value)
-                                    }
-                                />
-                                {/* Exibição dos alimentos equivalentes */}
-                                <div className="equivalentes-container">
-                                    {alimento.equivalentes.map((equivalente, index) => (
-                                        <div key={index} className="card">
-                                            <h4>{equivalente.nome}</h4>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                    {/* Botões para adicionar alimentos e refeições */}
-                    <div className="button-group">
-                        <button onClick={() => addAlimento(mealIndex)}>Adicionar mais alimentos</button>
-                        <button onClick={addMeal}>Adicionar Refeição</button>
-                    </div>
-                </div>
+                                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                                        <InputLabel>Tipo de Quantidade</InputLabel>
+                                        <Select
+                                            value={alimento.tipoQuantidade}
+                                            onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'tipoQuantidade', e.target.value)}
+                                        >
+                                            <MenuItem value="">Selecione o tipo</MenuItem>
+                                            <MenuItem value="Porção">Porção</MenuItem>
+                                            <MenuItem value="Quantidade">Quantidade</MenuItem>
+                                        </Select>
+                                        {alimento.tipoQuantidade === 'Porção' && (
+                                            <Typography color="error" sx={{ marginTop: 1 }}>
+                                                Considere 100 gramas para cada unidade de porção
+                                            </Typography>
+                                        )}
+                                    </FormControl>
+
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <TextField
+                                            type="text"
+                                            placeholder="Quantidade"
+                                            value={alimento.quantidade}
+                                            onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'quantidade', e.target.value)}
+                                            sx={{ flexWrap: 1 }}
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => buscarAlimentosEquivalentes(mealIndex, alimentoIndex, alimento.nome)}
+                                            sx={{ height: '40px', minWidth: '120px', fontSize: '0.875rem' }} // Ajuste o tamanho do botão
+                                        >
+                                            Buscar Equivalentes
+                                        </Button>
+                                    </Box>
+
+                                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', marginTop: 2 }}>
+                                        {alimento.equivalentes.map((equivalente, index) => (
+                                            <Paper key={index} sx={{ padding: 1, boxShadow: 1, textAlign: 'center', maxWidth: 150 }}>
+                                                <Typography variant="body2">{equivalente.nome}</Typography>
+                                            </Paper>
+                                        ))}
+                                    </Box>
+                                </Box>
+                            </Grid>
+                        ))}
+                        <Grid item xs={12} sx={{ display: 'flex', gap: 2, flexDirection: 'column', alignItems: 'flex-start', marginTop: 2 }}>
+                            <Button variant="contained" color="primary" onClick={() => addAlimento(mealIndex)} sx={{ minWidth: '200px' }}>
+                                Adicionar Alimento
+                            </Button>
+                            {meals.length > 1 && (
+                                <Button variant="outlined" color="secondary" onClick={() => setMeals((prev) => prev.filter((_, i) => i !== mealIndex))} sx={{ minWidth: '200px' }}>
+                                    Remover Refeição
+                                </Button>
+                            )}
+                        </Grid>
+                    </Grid>
+                </Paper>
             ))}
-            <button onClick={handleSaveDiet}>Finalizar Dieta</button>
-        </div>
+            <Box sx={{ display: 'flex', gap: 2, marginTop: 2 }}>
+                <Button variant="contained" color="primary" onClick={addMeal} sx={{ flexGrow: 1 }}>
+                    Adicionar Refeição
+                </Button>
+                <Button variant="contained" color="success" onClick={handleSaveDiet} sx={{ flexGrow: 1 }}>
+                    Salvar Dieta
+                </Button>
+            </Box>
+        </Box>
     );
 };
 

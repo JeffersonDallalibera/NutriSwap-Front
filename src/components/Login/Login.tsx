@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import { TextField, Button, Typography, Container, Box, Link, Paper } from '@mui/material';
 // @ts-ignore
 import { ReactComponent as Logo } from '../../assets/nutriSwap_LOGO_VERDE.svg';
 import api from "../../services/api";
@@ -18,50 +18,98 @@ const Login: React.FC = () => {
             const { token } = response.data;
 
             if (token) {
-                localStorage.setItem('access_token', token); // Armazena o token no localStorage
-                navigate('/home'); // Redireciona para a página inicial
+                localStorage.setItem('access_token', token);
+                navigate('/home');
             }
             setMessage(response.data.message);
         } catch (error: any) {
+            console.error(error);
             setMessage(error.response?.data.error || 'Login failed');
         }
     };
 
     return (
-        <div className="login-container">
-            <div className="window">
-                <div className="logo-container">
-                    <Logo className="logo" />
-                </div>
-                <div className="form-container">
-                    <form onSubmit={handleLogin}>
-                        <div className="login-field">
-                            <label htmlFor="username">Usuário:</label>
-                            <input
-                                type="text"
-                                id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        </div>
-                        <div className="login-field">
-                            <label htmlFor="password">Senha:</label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                        <button type="submit">Login</button>
-                    </form>
-                    <div className="forgot-password">
-                        <a href="/forgot-password">Esqueci minha senha</a>
-                    </div>
-                    {message && <div className="message">{message}</div>}
-                </div>
-            </div>
-        </div>
+        <Container component="main" maxWidth="xs">
+            <Paper elevation={3} sx={{ padding: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Box mb={2}>
+                    <Logo width={200} />
+                </Box>
+                <Typography component="h1" variant="h5">
+                    Login
+                </Typography>
+                <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="Usuário"
+                        name="username"
+                        autoComplete="username"
+                        autoFocus
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        InputProps={{
+                            sx: {
+                                borderRadius: '4px',
+                                backgroundColor: '#f9f9f9',
+                                '&:hover': {
+                                    borderColor: '#00796b',
+                                },
+                            }
+                        }}
+                        InputLabelProps={{
+                            sx: {
+                                color: '#333',
+                            }
+                        }}
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Senha"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        InputProps={{
+                            sx: {
+                                borderRadius: '4px',
+                                backgroundColor: '#f9f9f9',
+                                '&:hover': {
+                                    borderColor: '#00796b',
+                                },
+                            }
+                        }}
+                        InputLabelProps={{
+                            sx: {
+                                color: '#333',
+                            }
+                        }}
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        sx={{ mt: 2, mb: 2 }}
+                    >
+                        Login
+                    </Button>
+                    <Link href="/forgot-password" variant="body2" sx={{ display: 'block', textAlign: 'right' }}>
+                        Esqueci minha senha
+                    </Link>
+                    {message && (
+                        <Typography color="error" variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+                            {message}
+                        </Typography>
+                    )}
+                </Box>
+            </Paper>
+        </Container>
     );
 };
 

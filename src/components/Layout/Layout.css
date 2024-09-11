@@ -1,42 +1,26 @@
-/* src/components/Layout/Layout.css */
-.layout {
+/* src/components/Layout.css */
+.layout-container {
     display: flex;
-    height: 100vh; /* Garante que o layout ocupe a altura total da tela */
-    overflow: hidden; /* Evita rolagem no contêiner principal */
+    height: 100vh; /* Ocupa toda a altura da tela */
 }
 
 .sidebar {
-    width: 250px; /* Largura padrão da Sidebar */
-    position: fixed; /* Fixar a Sidebar na lateral */
-    top: 0;
-    left: 0;
-    height: 100%;
-    background-color: #2c3e50; /* Cor de fundo da Sidebar */
-    color: white;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Sombra */
-    transition: transform 0.3s ease; /* Transição suave para abertura e fechamento */
+    width: 240px; /* Largura quando maximizada */
+    transition: width 0.3s; /* Transição suave para a largura */
 }
 
-.sidebar.closed {
-    transform: translateX(-100%); /* Oculta a Sidebar deslizando para fora da tela */
+.sidebar.minimized {
+    width: 60px; /* Largura quando minimizada */
 }
 
 .content {
-    flex: 1;
-    margin-left: 250px; /* Espaço reservado para a Sidebar */
-    padding: 20px;
-    background-color: #9fe7f1; /* Cor de fundo do conteúdo */
-    overflow-y: auto; /* Permite rolagem vertical no conteúdo */
-    transition: margin-left 0.3s ease; /* Transição suave para ajuste de margem */
+    flex-grow: 1; /* Faz com que o conteúdo principal ocupe o espaço restante */
+    padding: 16px; /* Espaçamento interno */
+    overflow-y: auto; /* Permite rolar o conteúdo verticalmente se necessário */
+    transition: margin-left 0.3s; /* Transição suave para margem */
+    background-color: #f5f5f5; /* Cor de fundo */
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        width: 200px; /* Ajuste da largura da Sidebar em dispositivos móveis */
-    }
-
-    .content {
-        margin-left: 0; /* Remove a margem quando a Sidebar está oculta */
-    }
+.sidebar.minimized ~ .content {
+    margin-left: 60px; /* Alinhamento do conteúdo quando a Sidebar está minimizada */
 }

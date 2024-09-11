@@ -1,0 +1,69 @@
+/* Container principal */
+.container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Estilo para as caixas de entrada de texto */
+.text-field {
+    margin-bottom: 16px;
+}
+
+/* Estilo para botões */
+.button {
+    min-width: 120px;
+    font-size: 0.875rem;
+    margin-top: 8px;
+}
+
+/* Estilo para a área do formulário */
+.form-area {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Estilo para o painel de informações */
+.info-panel {
+    padding: 16px;
+    margin-top: 16px;
+}
+
+/* Estilo para os itens da lista */
+.list-item {
+    margin-bottom: 8px;
+}
+
+/* Estilo para os botões do painel de informações */
+.info-button {
+    min-width: 120px;
+    margin-top: 8px;
+}
+
+/* Estilo para os campos de seleção */
+.select-field {
+    margin-bottom: 16px;
+}
+
+/* Estilo para o painel de refeição */
+.meal-panel {
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+/* Estilo para as caixas de alimentos equivalentes */
+.equivalentes-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+/* Estilo para os botões de adicionar e remover */
+.add-remove-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+}
