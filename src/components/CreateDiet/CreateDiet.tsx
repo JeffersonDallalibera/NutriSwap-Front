@@ -5,13 +5,14 @@ import { PersonData } from '../Person/Person';
 import '../styles/styles.css'
 
 interface Alimento {
-    id: number;
+    idAlimento: number;
     nome: string;
     descricao: string;
 }
 
 interface AlimentoEntry {
     tipo: number;
+    idAlimento: number;
     nome: string;
     tipoQuantidade: string;
     quantidade: string;
@@ -24,7 +25,7 @@ interface TipoAlimento {
 }
 
 const createNewMeal = () => ({
-    alimentos: [{ tipo: 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }],
+    alimentos: [{ tipo: 0, idAlimento : 0 ,nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }],
 });
 
 function excluirAlimento(mealIndex: number, alimentoIndex: number) {
@@ -55,7 +56,7 @@ const AlimentoSelect: React.FC<{
             >
                 <MenuItem value="">Selecione um alimento</MenuItem>
                 {alimentos.map((alimento) => (
-                    <MenuItem key={alimento.id} value={getMenuItemLabel(alimento)}>
+                    <MenuItem key={alimento.idAlimento} value={getMenuItemLabel(alimento)}>
                         {getMenuItemLabel(alimento)}
                     </MenuItem>
                 ))}
@@ -125,7 +126,7 @@ const CreateDiet: React.FC = () => {
         setMeals((prevMeals) =>
             prevMeals.map((meal, index) =>
                 index === mealIndex
-                    ? { ...meal, alimentos: [...meal.alimentos, { tipo: 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }] }
+                    ? { ...meal, alimentos: [...meal.alimentos, { tipo: 0, idAlimento : 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }] }
                     : meal
             )
         );
@@ -133,11 +134,12 @@ const CreateDiet: React.FC = () => {
 
     const addMeal = () => setMeals((prevMeals) => [...prevMeals, createNewMeal()]);
 
-    const buscarAlimentosEquivalentes = async (mealIndex: number, alimentoIndex: number, alimentoId: string) => {
+    const buscarAlimentosEquivalentes = async (mealIndex: number, alimentoIndex: number, alimento: AlimentoEntry) => {
+        console.log(alimento);
         try {
-            const response = await fetch(`/api/alimentos/equivalentes?id=${alimentoId}`);
-            const data = await response.json();
-            handleAlimentoChange(mealIndex, alimentoIndex, 'equivalentes', data);
+            //const response = await fetch(`/api/alimentos/equivalentes?id=${alimento.id}`);
+            //const data = await response.json();
+            //handleAlimentoChange(mealIndex, alimentoIndex, 'equivalentes', data);
         } catch (error) {
             console.error('Erro ao buscar alimentos equivalentes:', error);
         }
@@ -191,8 +193,7 @@ const CreateDiet: React.FC = () => {
                                     <AlimentoSelect
                                         alimentos={alimentos}
                                         value={alimento.nome}
-                                        onChange={(e: SelectChangeEvent<string>) => handleAlimentoChange(mealIndex, alimentoIndex, 'nome', e.target.value)}
-                                    />
+                                        onChange={(e: SelectChangeEvent<string>) => handleAlimentoChange(mealIndex, alimentoIndex, 'nome', e.target.value)}></AlimentoSelect>
 
                                     <FormControl fullWidth sx={{ marginBottom: 2 }}>
                                         <InputLabel id="quantity-type-select-label">Tipo de Quantidade</InputLabel>
@@ -228,7 +229,7 @@ const CreateDiet: React.FC = () => {
                                         <Button
                                             variant="contained"
                                             color="primary"
-                                            onClick={() => buscarAlimentosEquivalentes(mealIndex, alimentoIndex, alimento.nome)}
+                                            onClick={() => buscarAlimentosEquivalentes(mealIndex, alimentoIndex, alimento)}
                                             sx={{ height: '32px', minWidth: '30px', fontSize: '0.75rem', px: 1 }}
                                         >
                                             Buscar Equivalentes
