@@ -6,6 +6,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import { Link, useLocation } from 'react-router-dom';
 // @ts-ignore
 import { ReactComponent as Logo } from '../../assets/nutriSwap_LOGO_VERDE.svg';
@@ -20,7 +21,7 @@ const Sidebar: React.FC = () => {
 
     const menuItems = [
         { text: 'Home', icon: <HomeIcon />, path: '/home' },
-        { text: 'Criar Dieta', icon: <FitnessCenterIcon />, path: '/home/create-diet' },
+        { text: 'Criar Dieta', icon: <LocalDiningIcon />, path: '/home/create-diet' },
         { text: 'Visualizar Dietas', icon: <VisibilityIcon />, path: '/home/view-diet' },
         { text: 'Adicionar Alimento', icon: <AddCircleIcon />, path: '/home/add-food' }
     ];

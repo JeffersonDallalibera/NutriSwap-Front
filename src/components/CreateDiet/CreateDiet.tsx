@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, MenuItem, Select, InputLabel, FormControl, Typography, Paper, Grid } from '@mui/material';
+import { Box, Button, TextField, MenuItem, Select, InputLabel, FormControl, Typography, Paper, Grid, SelectChangeEvent } from '@mui/material';
 import Person from '../Person';
 import { PersonData } from '../Person/Person';
 import '../styles/styles.css'
 
-
 interface Alimento {
     id: number;
     nome: string;
+    descricao: string;
 }
 
 interface AlimentoEntry {
@@ -26,6 +26,43 @@ interface TipoAlimento {
 const createNewMeal = () => ({
     alimentos: [{ tipo: 0, nome: '', tipoQuantidade: '', quantidade: '', equivalentes: [] }],
 });
+
+function excluirAlimento(mealIndex: number, alimentoIndex: number) {
+    // Implemente a lógica de exclusão aqui
+}
+
+const AlimentoSelect: React.FC<{
+    alimentos: Alimento[];
+    value: string;
+    onChange: (event: SelectChangeEvent<string>) => void;
+}> = ({ alimentos, value, onChange }) => {
+    const getMenuItemLabel = (alimento: Alimento) => {
+        if (alimento.descricao && alimento.descricao.trim() !== '') {
+            return `${alimento.nome} - ${alimento.descricao}`;
+        }
+        return alimento.nome;
+    };
+
+    return (
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <InputLabel id="food-select-label">Selecione um alimento</InputLabel>
+            <Select
+                labelId="food-select-label"
+                id="food-select"
+                value={value}
+                label="Selecione um alimento"
+                onChange={onChange}
+            >
+                <MenuItem value="">Selecione um alimento</MenuItem>
+                {alimentos.map((alimento) => (
+                    <MenuItem key={alimento.id} value={getMenuItemLabel(alimento)}>
+                        {getMenuItemLabel(alimento)}
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+    );
+};
 
 const CreateDiet: React.FC = () => {
     const [meals, setMeals] = useState<{ alimentos: AlimentoEntry[] }[]>([createNewMeal()]);
@@ -54,6 +91,7 @@ const CreateDiet: React.FC = () => {
             try {
                 const response = await fetch(`/api/alimentos?tipo=${selectedTipo}`);
                 const data = await response.json();
+                console.log(data)
                 setAlimentos(data);
             } catch (error) {
                 console.error('Erro ao buscar alimentos:', error);
@@ -95,9 +133,9 @@ const CreateDiet: React.FC = () => {
 
     const addMeal = () => setMeals((prevMeals) => [...prevMeals, createNewMeal()]);
 
-    const buscarAlimentosEquivalentes = async (mealIndex: number, alimentoIndex: number, alimentoNome: string) => {
+    const buscarAlimentosEquivalentes = async (mealIndex: number, alimentoIndex: number, alimentoId: string) => {
         try {
-            const response = await fetch(`/api/alimentos/equivalentes?nome=${alimentoNome}`);
+            const response = await fetch(`/api/alimentos/equivalentes?id=${alimentoId}`);
             const data = await response.json();
             handleAlimentoChange(mealIndex, alimentoIndex, 'equivalentes', data);
         } catch (error) {
@@ -119,15 +157,21 @@ const CreateDiet: React.FC = () => {
             <Person onSave={handleSavePerson} />
             {meals.map((meal, mealIndex) => (
                 <Paper key={mealIndex} sx={{ padding: 2, marginBottom: 2 }}>
-                    <Typography variant="h6">Refeição {mealIndex + 1}</Typography>
+                    <Typography variant="h6" sx={{
+                        marginBottom: 2,
+                        paddingLeft: 2
+                    }} >Refeição {mealIndex + 1}</Typography>
                     <Grid container spacing={2}>
                         {meal.alimentos.map((alimento, alimentoIndex) => (
                             <Grid item xs={12} key={alimentoIndex}>
                                 <Box sx={{ marginBottom: 2 }}>
                                     <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                                        <InputLabel>Tipo de alimento</InputLabel>
+                                        <InputLabel id="food-type-select-label">Tipo de alimento</InputLabel>
                                         <Select
+                                            labelId="food-type-select-label"
+                                            id="food-type-select"
                                             value={alimento.tipo}
+                                            label="Tipo de alimento"
                                             onChange={(e) => {
                                                 const tipoValue = e.target.value as string;
                                                 const tipoId = parseInt(tipoValue, 10);
@@ -144,30 +188,24 @@ const CreateDiet: React.FC = () => {
                                         </Select>
                                     </FormControl>
 
-                                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                                        <InputLabel>Selecione um alimento</InputLabel>
-                                        <Select
-                                            value={alimento.nome}
-                                            onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'nome', e.target.value)}
-                                        >
-                                            <MenuItem value="">Selecione um alimento</MenuItem>
-                                            {alimentos.map((alimento) => (
-                                                <MenuItem key={alimento.id} value={alimento.nome}>
-                                                    {alimento.nome}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
+                                    <AlimentoSelect
+                                        alimentos={alimentos}
+                                        value={alimento.nome}
+                                        onChange={(e: SelectChangeEvent<string>) => handleAlimentoChange(mealIndex, alimentoIndex, 'nome', e.target.value)}
+                                    />
 
                                     <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                                        <InputLabel>Tipo de Quantidade</InputLabel>
+                                        <InputLabel id="quantity-type-select-label">Tipo de Quantidade</InputLabel>
                                         <Select
+                                            labelId="quantity-type-select-label"
+                                            id="quantity-type-select"
                                             value={alimento.tipoQuantidade}
+                                            label="Tipo de Quantidade"
                                             onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'tipoQuantidade', e.target.value)}
                                         >
                                             <MenuItem value="">Selecione o tipo</MenuItem>
                                             <MenuItem value="Porção">Porção</MenuItem>
-                                            <MenuItem value="Quantidade">Quantidade</MenuItem>
+                                            <MenuItem value="Quantidade">Quantidade (g)</MenuItem>
                                         </Select>
                                         {alimento.tipoQuantidade === 'Porção' && (
                                             <Typography color="error" sx={{ marginTop: 1 }}>
@@ -176,13 +214,13 @@ const CreateDiet: React.FC = () => {
                                         )}
                                     </FormControl>
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                         <TextField
                                             type="text"
                                             placeholder="Quantidade"
                                             value={alimento.quantidade}
                                             onChange={(e) => handleAlimentoChange(mealIndex, alimentoIndex, 'quantidade', e.target.value)}
-                                            sx={{ flexWrap: 1 }}
+                                            sx={{ flexGrow: 1 }}
                                             multiline
                                             size="small"
                                         />
@@ -191,12 +229,19 @@ const CreateDiet: React.FC = () => {
                                             variant="contained"
                                             color="primary"
                                             onClick={() => buscarAlimentosEquivalentes(mealIndex, alimentoIndex, alimento.nome)}
-                                            sx={{ height: '40px', minWidth: '120px', fontSize: '0.875rem' }} // Ajuste o tamanho do botão
+                                            sx={{ height: '32px', minWidth: '30px', fontSize: '0.75rem', px: 1 }}
                                         >
                                             Buscar Equivalentes
                                         </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            onClick={() => excluirAlimento(mealIndex, alimentoIndex)}
+                                            sx={{ height: '32px', minWidth: '30px', fontSize: '0.75rem', px: 1 }}
+                                        >
+                                            Excluir
+                                        </Button>
                                     </Box>
-
                                     <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', marginTop: 2 }}>
                                         {alimento.equivalentes.map((equivalente, index) => (
                                             <Paper key={index} sx={{ padding: 1, boxShadow: 1, textAlign: 'center', maxWidth: 150 }}>
