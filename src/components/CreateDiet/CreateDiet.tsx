@@ -15,6 +15,8 @@ import React, { useEffect, useState } from "react";
 import Person from "../Person";
 import { PersonData } from "../Person/Person";
 import "../styles/styles.css";
+import api from "../../services/api";
+
 
 interface Alimento {
   idAlimento: number;
@@ -100,9 +102,8 @@ const CreateDiet: React.FC = () => {
   useEffect(() => {
     const fetchTiposAlimento = async () => {
       try {
-        const response = await fetch("/api/tipos_alimento");
-        const data = await response.json();
-        setTiposAlimento(data);
+        const response = await api.get("/api/tipos_alimento");
+        setTiposAlimento(response.data);
       } catch (error) {
         console.error("Erro ao buscar tipos de alimentos:", error);
       }
@@ -116,10 +117,9 @@ const CreateDiet: React.FC = () => {
       if (selectedTipo === 0) return;
 
       try {
-        const response = await fetch(`/api/alimentos?tipo=${selectedTipo}`);
-        const data = await response.json();
-        console.log(data);
-        setAlimentos(data);
+        const response = await api.get(`/api/alimentos?tipo=${selectedTipo}`);
+        console.log(response.data);
+        setAlimentos(response.data);
       } catch (error) {
         console.error("Erro ao buscar alimentos:", error);
       }
@@ -181,7 +181,7 @@ const CreateDiet: React.FC = () => {
     alimentoIndex: number,
     alimento: AlimentoEntry
   ) => {
-    console.log(alimento);
+    console.log(mealIndex, alimentoIndex, alimento);
     try {
       //const response = await fetch(`/api/alimentos/equivalentes?id=${alimento.id}`);
       //const data = await response.json();
