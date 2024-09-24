@@ -58,9 +58,16 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
     const [savedPerson, setSavedPerson] = useState<any | null>(null);
     const [imc, setImc] = useState<number | null>(null);
 
+    // Função para substituir vírgula por ponto
+    function replaceCommaWithDot(value: string): string {
+        return value.replace(',', '.');
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setPerson({ ...person, [name]: value });
+        // Aplica a função replaceCommaWithDot para os campos que precisam dessa conversão
+        const updatedValue = name === 'peso' || name === 'altura' ? replaceCommaWithDot(value) : value;
+        setPerson({ ...person, [name]: updatedValue });
     };
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
