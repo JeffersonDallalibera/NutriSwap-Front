@@ -1,20 +1,30 @@
-// src/components/AlimentoForm.tsx
-import React from 'react';
-import {Box, FormControl, InputLabel, MenuItem, Select, TextField, Button, Typography, Paper} from '@mui/material';
-import {AlimentoEntry, TipoAlimento, Alimento} from '../../types/dietTypes';
+// src/components/AlimentoForm/AlimentoForm.tsx
+import React, { useEffect, useState } from 'react';
+import {
+    Box,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Button,
+    Typography,
+    Paper,
+} from '@mui/material';
+import { AlimentoEntry, TipoAlimento, Alimento } from '../../types/dietTypes';
+import { fetchAlimentos } from "../../api/dietApi";
 
 interface AlimentoFormProps {
-    alimento: AlimentoEntry,
-    mealIndex: number,
-    alimentoIndex: number,
-    tiposAlimento: TipoAlimento[],
-    alimentos: Alimento[],
-    onTipoChange: (mealIndex: number, alimentoIndex: number, tipoId: number) => void,
-    onIdAlimentoChange: (mealIndex: number, alimentoIndex: number, alimentoId: number) => void,
-    onQuantidadeChange: (mealIndex: number, alimentoIndex: number, quantidade: string) => void,
-    onTipoQuantidadeChange: (mealIndex: number, alimentoIndex: number, tipoQuantidade: string) => void,
-    onBuscarEquivalentes: (mealIndex: number, alimentoIndex: number, alimentoId: number) => void,
-    onRemoveAlimento: (mealIndex: number, alimentoIndex: number) => void,
+    alimento: AlimentoEntry;
+    mealIndex: number;
+    alimentoIndex: number;
+    tiposAlimento: TipoAlimento[];
+    onTipoChange: (mealIndex: number, alimentoIndex: number, tipoId: number) => void;
+    onIdAlimentoChange: (mealIndex: number, alimentoIndex: number, alimentoId: number) => void;
+    onQuantidadeChange: (mealIndex: number, alimentoIndex: number, quantidade: string) => void;
+    onTipoQuantidadeChange: (mealIndex: number, alimentoIndex: number, tipoQuantidade: string) => void;
+    onBuscarEquivalentes: (mealIndex: number, alimentoIndex: number) => void;
+    onRemoveAlimento: (mealIndex: number, alimentoIndex: number) => void;
 }
 
 const AlimentoForm: React.FC<AlimentoFormProps> = ({
@@ -22,7 +32,6 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
                                                        mealIndex,
                                                        alimentoIndex,
                                                        tiposAlimento,
-                                                       alimentos,
                                                        onTipoChange,
                                                        onIdAlimentoChange,
                                                        onQuantidadeChange,
@@ -30,9 +39,27 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
                                                        onBuscarEquivalentes,
                                                        onRemoveAlimento,
                                                    }) => {
+
+    const [alimentos, setAlimentos] = useState<Alimento[]>([]);
+
+    useEffect(() => {
+        if (alimento.tipo) {
+            fetchAlimentos(alimento.tipo)
+                .then(alimentoData => setAlimentos(alimentoData));
+        }
+    }, [alimento.tipo]);
+
+    useEffect(() => {
+        // Atualiza o nome do alimento quando o ID muda
+        const alimentoSelecionado = alimentos.find(a => a.alimento_id === alimento.idAlimento);
+        if (alimentoSelecionado) {
+            onIdAlimentoChange(mealIndex, alimentoIndex, alimentoSelecionado.alimento_id);
+        }
+    }, [alimento.idAlimento, alimentos, onIdAlimentoChange, mealIndex, alimentoIndex]);
+
     return (
-        <Box sx={{marginBottom: 2}}>
-            <FormControl fullWidth sx={{marginBottom: 2}}>
+        <Box sx={{ marginBottom: 2 }}>
+            <FormControl fullWidth sx={{ marginBottom: 2 }}>
                 <InputLabel id={`food-type-select-label-${mealIndex}-${alimentoIndex}`}>
                     Tipo de alimento
                 </InputLabel>
@@ -49,7 +76,7 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
                 </Select>
             </FormControl>
 
-            <FormControl fullWidth sx={{marginBottom: 2}}>
+            <FormControl fullWidth sx={{ marginBottom: 2 }}>
                 <InputLabel id={`food-select-label-${mealIndex}-${alimentoIndex}`}>
                     Selecione um alimento
                 </InputLabel>
@@ -66,7 +93,7 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
                 </Select>
             </FormControl>
 
-            <FormControl fullWidth sx={{marginBottom: 2}}>
+            <FormControl fullWidth sx={{ marginBottom: 2 }}>
                 <InputLabel id={`quantity-type-select-label-${mealIndex}-${alimentoIndex}`}>
                     Tipo de Quantidade
                 </InputLabel>
@@ -81,27 +108,27 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
                     <MenuItem value="Quantidade">Quantidade (g)</MenuItem>
                 </Select>
                 {alimento.tipoQuantidade === "Porção" && (
-                    <Typography color="error" sx={{marginTop: 1}}>
+                    <Typography color="error" sx={{ marginTop: 1 }}>
                         Considere 100 gramas para cada unidade de porção
                     </Typography>
                 )}
             </FormControl>
 
-            <Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <TextField
                     type="text"
                     placeholder="Quantidade"
                     value={alimento.quantidade}
                     onChange={(e) => onQuantidadeChange(mealIndex, alimentoIndex, e.target.value)}
-                    sx={{flexGrow: 1}}
+                    sx={{ flexGrow: 1 }}
                     multiline
                     size="small"
                 />
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => onBuscarEquivalentes(mealIndex, alimentoIndex, alimento.idAlimento)}
-                    sx={{height: "32px", minWidth: "30px", fontSize: "0.75rem", px: 1}}
+                    onClick={() => onBuscarEquivalentes(mealIndex, alimentoIndex)}
+                    sx={{ height: "32px", minWidth: "30px", fontSize: "0.75rem", px: 1 }}
                 >
                     Buscar Equivalentes
                 </Button>
@@ -109,7 +136,7 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
                     variant="contained"
                     color="error"
                     onClick={() => onRemoveAlimento(mealIndex, alimentoIndex)}
-                    sx={{height: "32px", minWidth: "30px", fontSize: "0.75rem", px: 1}}
+                    sx={{ height: "32px", minWidth: "30px", fontSize: "0.75rem", px: 1 }}
                 >
                     Excluir
                 </Button>

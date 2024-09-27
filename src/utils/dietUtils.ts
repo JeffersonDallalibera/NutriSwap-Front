@@ -9,6 +9,7 @@ export const createNewAlimento = (): AlimentoEntry => ({
     equivalentes: [],
 });
 
-export const createNewMeal = (): Meal => ({
+export const createNewMeal = (): { nome: string; alimentos: AlimentoEntry[] } => ({
+    nome: "",
     alimentos: [createNewAlimento()],
 });

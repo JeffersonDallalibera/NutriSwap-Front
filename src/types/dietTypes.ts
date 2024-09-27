@@ -48,6 +48,7 @@ export interface TipoAlimento {
 }
 
 export interface Meal {
+    nome: string;
     alimentos: AlimentoEntry[];
 }
 
