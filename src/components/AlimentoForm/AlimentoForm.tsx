@@ -9,7 +9,7 @@ import {
     TextField,
     Button,
     Typography,
-    Paper,
+    Paper, Stack,
 } from '@mui/material';
 import { AlimentoEntry, TipoAlimento, Alimento } from '../../types/dietTypes';
 import { fetchAlimentos } from "../../api/dietApi";
@@ -124,23 +124,24 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
                     multiline
                     size="small"
                 />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => onBuscarEquivalentes(mealIndex, alimentoIndex)}
-                    sx={{ height: "32px", minWidth: "30px", fontSize: "0.75rem", px: 1 }}
-                >
-                    Buscar Equivalentes
-                </Button>
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => onRemoveAlimento(mealIndex, alimentoIndex)}
-                    sx={{ height: "32px", minWidth: "30px", fontSize: "0.75rem", px: 1 }}
-                >
-                    Excluir
-                </Button>
             </Box>
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => onBuscarEquivalentes(mealIndex, alimentoIndex)}
+                sx={{
+                    height: "32px",
+                    width: { xs: "100%", sm: "25%" }, // 100% em telas pequenas e 25% em telas maiores
+                    minWidth: "120px", // largura mínima para garantir legibilidade em smartphones
+                    maxWidth: "200px", // largura máxima para evitar que o botão fique muito grande
+                    fontSize: "0.75rem",
+                    px: 1,
+                    marginLeft: "auto",
+                    marginTop: 2 // Adiciona um espaço entre a Box e o Button
+                }}
+            >
+                Buscar Equivalentes
+            </Button>
 
             <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", marginTop: 2 }}>
                 {alimento.equivalentes.map((equivalentes, index) => (
