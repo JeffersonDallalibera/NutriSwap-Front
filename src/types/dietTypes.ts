@@ -55,3 +55,10 @@ export interface Meal {
 export interface PersonData {
     // Defina os campos necessários para PersonData
 }
+
+export interface Diet{
+    id: number;
+    createdAt: Date;
+    clientName: string;
+
+}

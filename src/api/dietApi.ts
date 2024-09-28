@@ -1,6 +1,6 @@
 // src/api/dietApi.ts
 import api from '../services/api';
-import { TipoAlimento, Alimento } from '../types/dietTypes';
+import { TipoAlimento, Alimento, Diet } from '../types/dietTypes';
 
 export const fetchTiposAlimento = async (): Promise<TipoAlimento[]> => {
     try {
@@ -36,5 +36,48 @@ export const fetchAlimentosEquivalentes = async (alimentoId: number, quantidade:
     } catch (error) {
         console.error("Erro ao buscar alimentos equivalentes:", error);
         return [];
+    }
+};
+
+export const fetchInserirNovoAlimento = async (alimentoData: any) => {
+    try {
+        // Fazendo a requisição POST para o backend
+        const response = await api.post(`api/inserir`, alimentoData);
+
+        // Retorna a resposta em caso de sucesso
+        return response;
+    } catch (error) {
+        // Lançar um erro em caso de falha
+        console.error("Erro ao inserir novo alimento:", error);
+        throw error;
+    }
+};
+
+
+export const fetchDiets = async (): Promise<Diet[]> => {
+    try {
+        const response = await api.get(`/diets`);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar dietas:', error);
+        throw error;
+    }
+};
+
+export const downloadDiet = async (dietId: number): Promise<void> => {
+    try {
+        const response = await api.get(`$/diets/${dietId}/download`, {
+            responseType: 'blob',
+        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `dieta_${dietId}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (error) {
+        console.error('Erro ao baixar dieta:', error);
+        throw error;
     }
 };

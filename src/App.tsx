@@ -22,7 +22,7 @@ const App: React.FC = () => {
                         <Route index element={<Home />} />
                         <Route path="create-diet" element={<CreateDiet />} />
                         <Route path="add-food" element={<AddFood />} />
-                        <Route path="view-diet" element={<ViewDiet />} />
+                        <Route path="view-diet" element={<ViewDiet/>} />
                     </Route>
                 </Route>
             </Routes>

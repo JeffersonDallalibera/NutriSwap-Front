@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './AddFood.css';
+import { fetchTiposAlimento, fetchInserirNovoAlimento } from "../../api/dietApi";
+import { TipoAlimento } from "../../types/dietTypes";
+import { Button, Snackbar, Alert, MenuItem, Select, InputLabel, FormControl, SelectChangeEvent, Grid, TextField } from '@mui/material';
+import Sidebar from '../Sidebar'; // Importe seu componente de Sidebar
 
 interface NutritionalInfo {
-    proteina: number;
-    carboidrato: number;
-    lipidio: number;
-    fibra: number;
-    calorias: number;
-    vitaminac: number;
-    calcio: number;
-    ferro: number;
-    sodio: number;
+    proteina: string; // Mudou para string
+    carboidrato: string; // Mudou para string
+    lipidio: string; // Mudou para string
+    fibra: string; // Mudou para string
+    calorias: string; // Mudou para string
+    vitaminac: string; // Mudou para string
+    calcio: string; // Mudou para string
+    ferro: string; // Mudou para string
+    sodio: string; // Mudou para string
+}
+
+interface Food {
+    nome: string;
+    categoria: string;
+    descricao: string;
+    tipo: string;
 }
 
 const AddFood: React.FC = () => {
-    const [food, setFood] = useState({
+    const [tiposAlimento, setTiposAlimento] = useState<TipoAlimento[]>([]);
+    const [food, setFood] = useState<Food>({
         nome: '',
         categoria: '',
         descricao: '',
@@ -22,86 +34,160 @@ const AddFood: React.FC = () => {
     });
 
     const [nutritionalInfo, setNutritionalInfo] = useState<NutritionalInfo>({
-        proteina: 0,
-        carboidrato: 0,
-        lipidio: 0,
-        fibra: 0,
-        calorias: 0,
-        vitaminac: 0,
-        calcio: 0,
-        ferro: 0,
-        sodio: 0
+        proteina: '',
+        carboidrato: '',
+        lipidio: '',
+        fibra: '',
+        calorias: '',
+        vitaminac: '',
+        calcio: '',
+        ferro: '',
+        sodio: ''
     });
+
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        fetchTiposAlimento().then(setTiposAlimento);
+    }, []);
 
     const handleFoodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFood({ ...food, [name]: value });
+        setFood({ ...food, [name as keyof Food]: value });
     };
 
     const handleNutritionalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setNutritionalInfo({ ...nutritionalInfo, [name]: parseFloat(value) });
+        setNutritionalInfo({ ...nutritionalInfo, [name as keyof NutritionalInfo]: value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSelectChange = (e: SelectChangeEvent<string>) => {
+        setFood({ ...food, tipo: e.target.value });
+    };
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Food:', food);
-        console.log('Nutritional Info:', nutritionalInfo);
-        // Handle form submission here
+
+        const alimentoData = {
+            nome: food.nome,
+            categoria: food.categoria,
+            descricao: food.descricao,
+            tipo_alimento_id: food.tipo,
+            informacoes_nutricionais: {
+                proteina: parseFloat(nutritionalInfo.proteina) || 0,
+                carboidrato: parseFloat(nutritionalInfo.carboidrato) || 0,
+                lipidio: parseFloat(nutritionalInfo.lipidio) || 0,
+                fibra: parseFloat(nutritionalInfo.fibra) || 0,
+                calorias: parseFloat(nutritionalInfo.calorias) || 0,
+                vitaminac: parseFloat(nutritionalInfo.vitaminac) || 0,
+                calcio: parseFloat(nutritionalInfo.calcio) || 0,
+                ferro: parseFloat(nutritionalInfo.ferro) || 0,
+                sodio: parseFloat(nutritionalInfo.sodio) || 0
+            }
+        };
+
+        try {
+            await fetchInserirNovoAlimento(alimentoData);
+            handleClick();
+            setFood({ nome: '', categoria: '', descricao: '', tipo: '' });
+            setNutritionalInfo({
+                proteina: '',
+                carboidrato: '',
+                lipidio: '',
+                fibra: '',
+                calorias: '',
+                vitaminac: '',
+                calcio: '',
+                ferro: '',
+                sodio: ''
+            });
+        } catch (error) {
+            console.error("Erro ao adicionar alimento:", error);
+        }
     };
 
     return (
         <div className="add-food-container">
-            <h1>Adicionar Alimento</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="grid-container">
-                    <div className="grid-item">
-                        <h2>Informações do Alimento</h2>
-                        <label>Nome:</label>
-                        <input type="text" name="nome" value={food.nome} onChange={handleFoodChange} />
+            <Grid container>
+                <Grid item xs={10}>
+                    <h1>Adicionar Alimento</h1>
+                    <form onSubmit={handleSubmit}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} md={6}>
+                                <h2>Informações do Alimento</h2>
+                                {['nome', 'categoria', 'descricao'].map(field => (
+                                    <TextField
+                                        key={field}
+                                        label={field.charAt(0).toUpperCase() + field.slice(1)}
+                                        name={field}
+                                        value={food[field as keyof Food]} // Acesso correto
+                                        onChange={handleFoodChange}
+                                        fullWidth
+                                        multiline
+                                        margin="normal" // Adiciona espaçamento
+                                    />
+                                ))}
+                                <FormControl fullWidth margin="normal"> {/* Adiciona espaçamento */}
+                                    <InputLabel>Tipo</InputLabel>
+                                    <Select
+                                        name="tipo"
+                                        value={food.tipo}
+                                        onChange={handleSelectChange}
+                                        label="Tipo"
+                                    >
+                                        {tiposAlimento.map(tipo => (
+                                            <MenuItem key={tipo.id} value={tipo.id}>
+                                                {tipo.nome}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
 
-                        <label>Categoria:</label>
-                        <input type="text" name="categoria" value={food.categoria} onChange={handleFoodChange} />
+                            <Grid item xs={12} md={6}>
+                                <h2>Informação Nutricional</h2>
+                                {[
+                                    'proteina', 'carboidrato', 'lipidio', 'fibra',
+                                    'calorias', 'vitaminac', 'calcio', 'ferro', 'sodio'
+                                ].map(field => (
+                                    <TextField
+                                        key={field}
+                                        label={`${field.charAt(0).toUpperCase() + field.slice(1)} (g)`} // Ajusta o label
+                                        name={field}
+                                        type="number"
+                                        value={nutritionalInfo[field as keyof NutritionalInfo]} // Acesso correto
+                                        onChange={handleNutritionalChange}
+                                        fullWidth
+                                        multiline
+                                        margin="normal" // Adiciona espaçamento
+                                        placeholder="0" // Adiciona um placeholder
+                                    />
+                                ))}
+                            </Grid>
+                        </Grid>
+                        <Button type="submit" variant="contained" color="primary">
+                            Adicionar Alimento
+                        </Button>
+                    </form>
 
-                        <label>Descrição:</label>
-                        <input type="text" name="descricao" value={food.descricao} onChange={handleFoodChange} />
-
-                        <label>Tipo:</label>
-                        <input type="text" name="tipo" value={food.tipo} onChange={handleFoodChange} />
-                    </div>
-
-                    <div className="grid-item">
-                        <h2>Informação Nutricional</h2>
-                        <label>Proteína (g):</label>
-                        <input type="number" name="proteina" value={nutritionalInfo.proteina} onChange={handleNutritionalChange} />
-
-                        <label>Carboidrato (g):</label>
-                        <input type="number" name="carboidrato" value={nutritionalInfo.carboidrato} onChange={handleNutritionalChange} />
-
-                        <label>Lipídio (g):</label>
-                        <input type="number" name="lipidio" value={nutritionalInfo.lipidio} onChange={handleNutritionalChange} />
-
-                        <label>Fibra (g):</label>
-                        <input type="number" name="fibra" value={nutritionalInfo.fibra} onChange={handleNutritionalChange} />
-
-                        <label>Calorias (kcal):</label>
-                        <input type="number" name="calorias" value={nutritionalInfo.calorias} onChange={handleNutritionalChange} />
-
-                        <label>Vitamina C (mg):</label>
-                        <input type="number" name="vitaminac" value={nutritionalInfo.vitaminac} onChange={handleNutritionalChange} />
-
-                        <label>Cálcio (mg):</label>
-                        <input type="number" name="calcio" value={nutritionalInfo.calcio} onChange={handleNutritionalChange} />
-
-                        <label>Ferro (mg):</label>
-                        <input type="number" name="ferro" value={nutritionalInfo.ferro} onChange={handleNutritionalChange} />
-
-                        <label>Sódio (mg):</label>
-                        <input type="number" name="sodio" value={nutritionalInfo.sodio} onChange={handleNutritionalChange} />
-                    </div>
-                </div>
-                <button type="submit">Adicionar Alimento</button>
-            </form>
+                    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity="success" variant="filled" sx={{ width: '100%' }}>
+                            Alimento adicionado com sucesso!
+                        </Alert>
+                    </Snackbar>
+                </Grid>
+            </Grid>
         </div>
     );
 };

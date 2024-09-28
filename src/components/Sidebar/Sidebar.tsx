@@ -41,13 +41,28 @@ const Sidebar: React.FC = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', padding: 1, justifyContent: open ? 'space-between' : 'center' }}>
                 {open && (
                     <Box sx={{ marginLeft: 2 }}>
-                        <Logo width={100} height={40} />
+                        <Logo width={120} height={80} />
                     </Box>
                 )}
-                <IconButton onClick={handleDrawerToggle} sx={{ margin: 1 }}>
-                    {open ? <ChevronLeftIcon /> : <MenuIcon />}
-                </IconButton>
+
             </Box>
+            <IconButton
+                onClick={handleDrawerToggle}
+                sx={{
+                    margin: 1,
+                    backgroundColor: 'rgb(0, 122, 108)', // Cor de fundo verde
+                    width: '90%%', // Ocupar toda a largura disponível
+                    height: 'auto', // Altura automática
+                    borderRadius: '4px', // Borda arredondada (opcional)
+                    // Estilos para o botão ChevronLeftIcon
+                    '& svg': { // Estiliza o ícone dentro do botão
+                        transition: 'transform 0.3s', // Adiciona uma transição suave
+                        transform: open ? 'rotate(0deg)' : 'rotate(180deg)' // Rotaciona o ícone
+                    }
+                }}
+            >
+                {open ? <ChevronLeftIcon /> : <MenuIcon />}
+            </IconButton>
             <Divider />
             <List>
                 {menuItems.map((item) => (
