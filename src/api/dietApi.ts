@@ -1,6 +1,6 @@
 // src/api/dietApi.ts
 import api from '../services/api';
-import { TipoAlimento, Alimento, Diet } from '../types/dietTypes';
+import {TipoAlimento, Alimento, Diet, Meal} from '../types/dietTypes';
 
 export const fetchTiposAlimento = async (): Promise<TipoAlimento[]> => {
     try {
@@ -78,6 +78,20 @@ export const downloadDiet = async (dietId: number): Promise<void> => {
         link.remove();
     } catch (error) {
         console.error('Erro ao baixar dieta:', error);
+        throw error;
+    }
+};
+export const fetchGerarPdf = async (data: { idPessoa: number | undefined; refeicoes: Meal[] }) => {
+    try {
+        console.log(data.idPessoa);
+        
+        console.log(data)
+        const response = await api.post('api/gerar_dieta', data, {
+            responseType: 'blob', // Para lidar com o PDF
+        });
+        return response;
+    } catch (error) {
+        console.error("Erro ao gerar PDF:", error);
         throw error;
     }
 };

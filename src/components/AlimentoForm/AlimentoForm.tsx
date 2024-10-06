@@ -27,7 +27,8 @@ interface AlimentoFormProps {
   onIdAlimentoChange: (
     mealIndex: number,
     alimentoIndex: number,
-    alimentoId: number
+    alimentoId: number,
+    alimentoNome: string
   ) => void;
   onQuantidadeChange: (
     mealIndex: number,
@@ -74,7 +75,7 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
       onIdAlimentoChange(
         mealIndex,
         alimentoIndex,
-        alimentoSelecionado.alimento_id
+        alimentoSelecionado.alimento_id, alimentoSelecionado.nome
       );
     }
   }, [
@@ -118,7 +119,7 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
           value={alimento.idAlimento || ""}
           label="Selecione um alimento"
           onChange={(e) =>
-            onIdAlimentoChange(mealIndex, alimentoIndex, Number(e.target.value))
+            onIdAlimentoChange(mealIndex, alimentoIndex, Number(e.target.value), String(e.target.value))
           }
         >
           <MenuItem value="">Selecione um alimento</MenuItem>
@@ -197,7 +198,7 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
           >
             <Typography variant="subtitle2">{eq.alimento.nome}</Typography>
             <Typography variant="body2">
-              {eq.quantidade} {eq.tipo}
+              Quantidade: {eq.quantidade_ajustada} g
             </Typography>
             {/* Adicione mais informações nutricionais conforme necessário */}
           </Paper>

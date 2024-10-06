@@ -3,12 +3,14 @@ import { TextField, Button, Typography, Box, Paper, FormControlLabel, Checkbox }
 import '../styles/styles.css';
 
 export interface PersonData {
+    id_pessoa?: number;
     nome: string;
     idade: number;
     peso: number;
     altura: number;
     email: string;
     telefone: string;
+    imc_pessoa?: number; // Adicionado para manter consistência com o cálculo original
     restricoes: {
         vegetariano: boolean;
         intoleranteLactose: boolean;
@@ -40,6 +42,7 @@ const getIMCLevel = (imc: number) => {
 
 const Person: React.FC<PersonProps> = ({ onSave }) => {
     const [person, setPerson] = useState<PersonData>({
+        id_pessoa: undefined,
         nome: '',
         idade: 0,
         peso: 0,
@@ -55,17 +58,14 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
         },
     });
 
-    const [savedPerson, setSavedPerson] = useState<any | null>(null);
-    const [imc, setImc] = useState<number | null>(null);
+    const [savedPerson, setSavedPerson] = useState<PersonData | null>(null);
 
-    // Função para substituir vírgula por ponto
     function replaceCommaWithDot(value: string): string {
         return value.replace(',', '.');
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        // Aplica a função replaceCommaWithDot para os campos que precisam dessa conversão
         const updatedValue = name === 'peso' || name === 'altura' ? replaceCommaWithDot(value) : value;
         setPerson({ ...person, [name]: updatedValue });
     };
@@ -105,8 +105,15 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
             }
 
             const data = await response.json();
-            setSavedPerson({
-                ...data,
+            const savedPersonData: PersonData = {
+                id_pessoa: data.id_pessoa,
+                nome: data.nome_pessoa,
+                idade: data.idade_pessoa,
+                peso: data.peso_pessoa,
+                altura: data.altura_pessoa,
+                email: data.email_pessoa,
+                telefone: data.telefone_pessoa,
+                imc_pessoa: data.imc_pessoa,
                 restricoes: {
                     vegetariano: data.vegetariano,
                     intoleranteLactose: data.intolerante_lactose,
@@ -114,11 +121,13 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
                     alergiaGluten: data.alergia_gluten,
                     alergiaMariscos: data.alergia_mariscos,
                 },
-            });
-            onSave(personData);
+            };
+            setSavedPerson(savedPersonData);
+            onSave(savedPersonData);
 
             // Limpar formulário
             setPerson({
+                id_pessoa: undefined,
                 nome: '',
                 idade: 0,
                 peso: 0,
@@ -265,13 +274,14 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
                 <Paper sx={{ padding: 2, marginTop: 2 }}>
                     <Typography variant="h6">Dados da Pessoa Adicionada:</Typography>
                     <ul>
-                        <li><strong>Nome:</strong> {savedPerson.nome_pessoa}</li>
-                        <li><strong>Idade:</strong> {savedPerson.idade_pessoa}</li>
-                        <li><strong>Peso:</strong> {savedPerson.peso_pessoa} kg</li>
-                        <li><strong>Altura:</strong> {savedPerson.altura_pessoa} cm</li>
-                        <li><strong>Email:</strong> {savedPerson.email_pessoa}</li>
-                        <li><strong>Telefone:</strong> {savedPerson.telefone_pessoa}</li>
-                        <li><strong>IMC:</strong> {parseFloat(savedPerson.imc_pessoa).toFixed(2)} ({getIMCLevel(parseFloat(savedPerson.imc_pessoa))})</li>
+                        <li><strong>ID:</strong> {savedPerson.id_pessoa}</li>
+                        <li><strong>Nome:</strong> {savedPerson.nome}</li>
+                        <li><strong>Idade:</strong> {savedPerson.idade}</li>
+                        <li><strong>Peso:</strong> {savedPerson.peso} kg</li>
+                        <li><strong>Altura:</strong> {savedPerson.altura} cm</li>
+                        <li><strong>Email:</strong> {savedPerson.email}</li>
+                        <li><strong>Telefone:</strong> {savedPerson.telefone}</li>
+                        <li><strong>IMC:</strong> {parseFloat(String(savedPerson.imc_pessoa!)).toFixed(2)} ({getIMCLevel(parseFloat(String(savedPerson.imc_pessoa!)))})</li>
                         <li><strong>Vegetariano:</strong> {savedPerson.restricoes.vegetariano ? 'Sim' : 'Não'}</li>
                         <li><strong>Intolerante à Lactose:</strong> {savedPerson.restricoes.intoleranteLactose ? 'Sim' : 'Não'}</li>
                         <li><strong>Alergia a Nozes:</strong> {savedPerson.restricoes.alergiaNozes ? 'Sim' : 'Não'}</li>

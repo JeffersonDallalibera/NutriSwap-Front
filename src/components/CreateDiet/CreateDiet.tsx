@@ -1,67 +1,67 @@
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  fetchAlimentosEquivalentes,
-  fetchTiposAlimento,
+    fetchAlimentosEquivalentes, fetchGerarPdf,
+    fetchTiposAlimento,
 } from "../../api/dietApi";
 import {
   Alimento,
   AlimentoEntry,
   Equivalente,
   Meal,
-  PersonData,
   TipoAlimento,
 } from "../../types/dietTypes";
 import { createNewAlimento, createNewMeal } from "../../utils/dietUtils";
 import AlimentoForm from "../AlimentoForm/AlimentoForm";
-import Person from "../Person/Person";
+import Person, {PersonData} from "../Person/Person";
 
 const CreateDiet: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([createNewMeal()]);
   const [tiposAlimento, setTiposAlimento] = useState<TipoAlimento[]>([]);
+  const [pessoaId, setPessoaId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     fetchTiposAlimento().then(setTiposAlimento);
   }, []);
 
-  const handleAlimentoChange = useCallback(
-    (
-      mealIndex: number,
-      alimentoIndex: number,
-      field: keyof AlimentoEntry,
-      value: string | number | Alimento[] | Equivalente[] | number
-    ) => {
-      setMeals((prevMeals) =>
-        prevMeals.map((meal, mIndex) =>
-          mIndex === mealIndex
-            ? {
-                ...meal,
-                alimentos: meal.alimentos.map((alimento, aIndex) =>
-                  aIndex === alimentoIndex
-                    ? { ...alimento, [field]: value }
-                    : alimento
-                ),
-              }
-            : meal
-        )
-      );
-    },
-    []
-  );
+    const handleAlimentoChange = useCallback(
+        (
+            mealIndex: number,
+            alimentoIndex: number,
+            field: keyof AlimentoEntry,
+            value: string | number | Alimento[] | Equivalente[] | number
+        ) => {
+            setMeals((prevMeals) =>
+                prevMeals.map((meal, mIndex) =>
+                    mIndex === mealIndex
+                        ? {
+                            ...meal,
+                            alimentos: meal.alimentos.map((alimento, aIndex) =>
+                                aIndex === alimentoIndex
+                                    ? { ...alimento, [field]: value }
+                                    : alimento
+                            ),
+                        }
+                        : meal
+                )
+            );
+        },
+        []
+    );
 
   const handleTipoChange = useCallback(
     (mealIndex: number, alimentoIndex: number, tipoId: number) => {
       handleAlimentoChange(mealIndex, alimentoIndex, "tipo", tipoId);
       handleAlimentoChange(mealIndex, alimentoIndex, "idAlimento", 0);
-      // Resetar o nome se necessário
       handleAlimentoChange(mealIndex, alimentoIndex, "nome", "");
     },
     [handleAlimentoChange]
   );
 
   const handleIdAlimentoChange = useCallback(
-    (mealIndex: number, alimentoIndex: number, alimentoId: number) => {
+    (mealIndex: number, alimentoIndex: number, alimentoId: number, alimentoNome: string) => {
       handleAlimentoChange(mealIndex, alimentoIndex, "idAlimento", alimentoId);
+      handleAlimentoChange(mealIndex, alimentoIndex, "nome", alimentoNome);
     },
     [handleAlimentoChange]
   );
@@ -124,8 +124,8 @@ const CreateDiet: React.FC = () => {
     );
   }, []);
 
-  const buscarAlimentosEquivalentes = useCallback(
-    async (mealIndex: number, alimentoIndex: number) => {
+
+  const buscarAlimentosEquivalentes = useCallback(async (mealIndex: number, alimentoIndex: number) => {
       const alimento = meals[mealIndex].alimentos[alimentoIndex];
       if (
         alimento.idAlimento &&
@@ -159,12 +159,30 @@ const CreateDiet: React.FC = () => {
     [meals, handleAlimentoChange]
   );
 
-  const handleSaveDiet = () => {
-    console.log("Gerar PDF e salvar dieta:", meals);
-  };
+  const handleSaveDiet = async () => {
+        console.log(pessoaId);
+        console.log("Gerar PDF e salvar dieta:", pessoaId, meals);
+
+        try {
+            const pdfResponse = await fetchGerarPdf({ idPessoa: pessoaId, refeicoes: meals });
+            console.log("PDF gerado com sucesso:", pdfResponse);
+
+            // Aqui você pode implementar lógica para lidar com o PDF gerado, como abrir ou baixar o arquivo
+            const blob = new Blob([pdfResponse.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nutriswap_report.pdf';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Erro ao gerar PDF:", error);
+        }
+    };
 
   const handleSavePerson = (person: PersonData) => {
     console.log("Pessoa salva:", person);
+    setPessoaId(person.id_pessoa);
   };
 
   const handleMealNameChange = (mealIndex: number, name: string) => {

@@ -15,6 +15,7 @@ export interface Alimento {
 export interface Equivalente {
   alimento: Alimento;
   informacaoNutricional: InformacaoNutricional; // corrigir o nome aqui
+  quantidade_ajustada: number
 }
 
 export interface InformacaoNutricional {
@@ -47,10 +48,6 @@ export interface TipoAlimento {
 export interface Meal {
   nome: string;
   alimentos: AlimentoEntry[];
-}
-
-export interface PersonData {
-  // Defina os campos necessários para PersonData
 }
 
 export interface Diet {
