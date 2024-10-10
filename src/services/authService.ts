@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/auth'; // URL do seu backend
+const apiUrl = process.env.REACT_APP_API_URL;
+
+const API_URL_AUTH = '/api/auth'; // URL do seu backend
 
 interface LoginResponse {
     token: string;
@@ -12,7 +14,7 @@ interface LoginResponse {
 }
 
 const login = async (username: string, password: string): Promise<LoginResponse> => {
-    const response = await axios.post<LoginResponse>(`${API_URL}/login`, {
+    const response = await axios.post<LoginResponse>(`${apiUrl},${API_URL_AUTH}/login`, {
         username,
         password,
     });

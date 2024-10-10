@@ -92,7 +92,9 @@ const Person: React.FC<PersonProps> = ({ onSave }) => {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/api/pessoa/adicionar', {
+            const apiUrl = process.env.REACT_APP_API_URL;
+
+            const response = await fetch(apiUrl + '/api/pessoa/adicionar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
