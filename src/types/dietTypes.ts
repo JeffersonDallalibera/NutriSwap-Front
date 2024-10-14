@@ -15,7 +15,8 @@ export interface Alimento {
 export interface Equivalente {
   alimento: Alimento;
   informacaoNutricional: InformacaoNutricional; // corrigir o nome aqui
-  quantidade_ajustada: number
+  quantidade_ajustada: number;
+  grau_similaridade: number;
 }
 
 export interface InformacaoNutricional {

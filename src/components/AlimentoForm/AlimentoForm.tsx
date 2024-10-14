@@ -200,6 +200,9 @@ const AlimentoForm: React.FC<AlimentoFormProps> = ({
             <Typography variant="body2">
               Quantidade: {eq.quantidade_ajustada} g
             </Typography>
+            <Typography variant="body2">
+              Equivalencia: {eq.grau_similaridade} %
+            </Typography>
             {/* Adicione mais informações nutricionais conforme necessário */}
           </Paper>
         ))}
