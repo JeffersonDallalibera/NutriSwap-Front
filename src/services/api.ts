@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000' // URL do seu backend
+    baseURL: 'https://api.nutriswap.com.br/' // URL do seu backend
 });
 
 // Adiciona o token JWT aos cabeçalhos das requisições
